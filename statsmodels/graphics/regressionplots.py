@@ -1,14 +1,49 @@
+
+Skip to content
+Pull requests
+Issues
+Marketplace
+Explore
+@mpalinski
+mpalinski /
+statsmodels
+Public
+forked from statsmodels/statsmodels
+
+Code
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+
+    Settings
+
+statsmodels/statsmodels/graphics/regressionplots.py /
+@mpalinski
+mpalinski layout
+Latest commit 0a36ce9 15 days ago
+History
+10 contributors
+@jseabold
+@bashtage
+@josef-pkt
+@mpalinski
+@kshedden
+@jbrockmendel
+@saketkc
+@jerry-dumblauskas
+@aoot
+@AmarAdilovic
+1297 lines (1047 sloc) 43.5 KB
 '''Partial Regression plot and residual plots to find misspecification
-
-
 Author: Josef Perktold
 License: BSD-3
 Created: 2011-01-23
-
 update
 2011-06-05 : start to convert example to usable functions
 2011-10-27 : docstrings
-
 '''
 from statsmodels.compat.pandas import Appender
 from statsmodels.compat.python import lrange, lzip
@@ -49,7 +84,6 @@ def _high_leverage(results):
 def add_lowess(ax, lines_idx=0, frac=.2, **lowess_kwargs):
     """
     Add Lowess line to a plot.
-
     Parameters
     ----------
     ax : AxesSubplot
@@ -61,7 +95,6 @@ def add_lowess(ax, lines_idx=0, frac=.2, **lowess_kwargs):
         The fraction of the points to use when doing the lowess fit.
     lowess_kwargs
         Additional keyword arguments are passes to lowess.
-
     Returns
     -------
     Figure
@@ -77,10 +110,8 @@ def add_lowess(ax, lines_idx=0, frac=.2, **lowess_kwargs):
 def plot_fit(results, exog_idx, y_true=None, ax=None, vlines=True, **kwargs):
     """
     Plot fit against one regressor.
-
     This creates one graph with the scatterplot of observed values
     compared to fitted values.
-
     Parameters
     ----------
     results : Results
@@ -99,40 +130,31 @@ def plot_fit(results, exog_idx, y_true=None, ax=None, vlines=True, **kwargs):
     **kwargs
         The keyword arguments are passed to the plot command for the fitted
         values points.
-
     Returns
     -------
     Figure
         If `ax` is None, the created figure.  Otherwise the figure to which
         `ax` is connected.
-
     Examples
     --------
     Load the Statewide Crime data set and perform linear regression with
     `poverty` and `hs_grad` as variables and `murder` as the response
-
     >>> import statsmodels.api as sm
     >>> import matplotlib.pyplot as plt
-
     >>> data = sm.datasets.statecrime.load_pandas().data
     >>> murder = data['murder']
     >>> X = data[['poverty', 'hs_grad']]
-
     >>> X["constant"] = 1
     >>> y = murder
     >>> model = sm.OLS(y, X)
     >>> results = model.fit()
-
     Create a plot just for the variable 'Poverty':
-
     >>> fig, ax = plt.subplots()
     >>> fig = sm.graphics.plot_fit(results, 0, ax=ax)
     >>> ax.set_ylabel("Murder Rate")
     >>> ax.set_xlabel("Poverty Level")
     >>> ax.set_title("Linear Regression")
-
     >>> plt.show()
-
     .. plot:: plots/graphics_plot_fit_ex.py
     """
 
@@ -171,11 +193,9 @@ def plot_fit(results, exog_idx, y_true=None, ax=None, vlines=True, **kwargs):
 
 def plot_regress_exog(results, exog_idx, fig=None):
     """Plot regression results against one regressor.
-
     This plots four graphs in a 2 by 2 figure: 'endog versus exog',
     'residuals versus exog', 'fitted versus exog' and
     'fitted plus residual versus exog'
-
     Parameters
     ----------
     results : result instance
@@ -185,34 +205,28 @@ def plot_regress_exog(results, exog_idx, fig=None):
     fig : Figure, optional
         If given, this figure is simply returned.  Otherwise a new figure is
         created.
-
     Returns
     -------
     Figure
         The value of `fig` if provided. Otherwise a new instance.
-
     Examples
     --------
     Load the Statewide Crime data set and build a model with regressors
     including the rate of high school graduation (hs_grad), population in urban
     areas (urban), households below poverty line (poverty), and single person
     households (single).  Outcome variable is the murder rate (murder).
-
     Build a 2 by 2 figure based on poverty showing fitted versus actual murder
     rate, residuals versus the poverty rate, partial regression plot of poverty,
     and CCPR plot for poverty rate.
-
     >>> import statsmodels.api as sm
-    >>> import matplotlib.pyplot as plot
+    >>> import matplotlib.pyplot as plt
     >>> import statsmodels.formula.api as smf
-
     >>> fig = plt.figure(figsize=(8, 6))
     >>> crime_data = sm.datasets.statecrime.load_pandas()
     >>> results = smf.ols('murder ~ hs_grad + urban + poverty + single',
     ...                   data=crime_data.data).fit()
     >>> sm.graphics.plot_regress_exog(results, 'poverty', fig=fig)
     >>> plt.show()
-
     .. plot:: plots/graphics_regression_regress_exog.py
     """
 
@@ -272,21 +286,16 @@ def plot_regress_exog(results, exog_idx, fig=None):
 
 def _partial_regression(endog, exog_i, exog_others):
     """Partial regression.
-
     regress endog on exog_i conditional on exog_others
-
     uses OLS
-
     Parameters
     ----------
     endog : array_like
     exog : array_like
     exog_others : array_like
-
     Returns
     -------
     res1c : OLS results instance
-
     (res1a, res1b) : tuple of OLS results instances
          results from regression of endog on exog_others and of exog_i on
          exog_others
@@ -300,10 +309,10 @@ def _partial_regression(endog, exog_i, exog_others):
 
 
 def plot_partregress(endog, exog_i, exog_others, data=None,
-                     title_kwargs={}, obs_labels=True, label_kwargs={},
+                     # title_kwargs={},
+                     obs_labels=True, label_kwargs={},
                      ax=None, ret_coords=False, eval_env=1, **kwargs):
     """Plot partial regression for a single regressor.
-
     Parameters
     ----------
     endog : {ndarray, str}
@@ -342,7 +351,6 @@ def plot_partregress(endog, exog_i, exog_others, data=None,
         defining endog or exog.
     **kwargs
         The keyword arguments passed to plot for the points.
-
     Returns
     -------
     fig : Figure
@@ -350,44 +358,36 @@ def plot_partregress(endog, exog_i, exog_others, data=None,
         `ax` is connected.
     coords : list, optional
         If ret_coords is True, return a tuple of arrays (x_coords, y_coords).
-
     See Also
     --------
     plot_partregress_grid : Plot partial regression for a set of regressors.
-
     Notes
     -----
     The slope of the fitted line is the that of `exog_i` in the full
     multiple regression. The individual points can be used to assess the
     influence of points on the estimated coefficient.
-
     Examples
     --------
     Load the Statewide Crime data set and plot partial regression of the rate
     of high school graduation (hs_grad) on the murder rate(murder).
-
     The effects of the percent of the population living in urban areas (urban),
     below the poverty line (poverty) , and in a single person household (single)
     are removed by OLS regression.
-
     >>> import statsmodels.api as sm
     >>> import matplotlib.pyplot as plt
-
     >>> crime_data = sm.datasets.statecrime.load_pandas()
     >>> sm.graphics.plot_partregress(endog='murder', exog_i='hs_grad',
     ...                              exog_others=['urban', 'poverty', 'single'],
     ...                              data=crime_data.data, obs_labels=False)
     >>> plt.show()
-
     .. plot:: plots/graphics_regression_partregress.py
-
     More detailed examples can be found in the Regression Plots notebook
     on the examples page.
     """
     #NOTE: there is no interaction between possible missing data and
     #obs_labels yet, so this will need to be tweaked a bit for this case
     fig, ax = utils.create_mpl_ax(ax)
-    print("eval_env:", eval_env)
+
     # strings, use patsy to transform to data
     if isinstance(endog, str):
         endog = dmatrix(endog + "-1", data, eval_env=eval_env)
@@ -412,7 +412,7 @@ def plot_partregress(endog, exog_i, exog_others, data=None,
     if RHS_isemtpy:
         endog = np.asarray(endog)
         exog_i = np.asarray(exog_i)
-        ax.plot(endog, exog_i, 'o', **kwargs)
+        ax.plot(endog, exog_i, '.', **kwargs)
         fitted_line = OLS(endog, exog_i).fit()
         x_axis_endog_name = 'x' if isinstance(exog_i, np.ndarray) else exog_i.name
         y_axis_endog_name = 'y' if isinstance(endog, np.ndarray) else endog.design_info.column_names[0]
@@ -423,16 +423,16 @@ def plot_partregress(endog, exog_i, exog_others, data=None,
         yaxis_resid = res_yaxis.resid
         x_axis_endog_name = res_xaxis.model.endog_names
         y_axis_endog_name = res_yaxis.model.endog_names
-        ax.plot(xaxis_resid, yaxis_resid, 'o', **kwargs)
+        ax.plot(xaxis_resid, yaxis_resid, '.', **kwargs,alpha=.4)
         fitted_line = OLS(yaxis_resid, xaxis_resid).fit()
 
     fig = abline_plot(0, fitted_line.params[0], color='k', ax=ax)
 
     if x_axis_endog_name == 'y':  # for no names regression will just get a y
         x_axis_endog_name = 'x'  # this is misleading, so use x
-    ax.set_xlabel("e(%s | X)" % x_axis_endog_name)
-    ax.set_ylabel("e(%s | X)" % y_axis_endog_name)
-    ax.set_title('Partial Regression Plot', **title_kwargs)
+    ax.set_xlabel("%s" % x_axis_endog_name.replace("Q('",'').replace("'","").replace(")",""))
+    ax.set_ylabel("%s" % y_axis_endog_name.replace("Q('",'').replace("'","").replace(")",""))
+    # ax.set_title('', **title_kwargs)
 
     # NOTE: if we want to get super fancy, we could annotate if a point is
     # clicked using this widget
@@ -469,7 +469,6 @@ def plot_partregress(endog, exog_i, exog_others, data=None,
 def plot_partregress_grid(results, exog_idx=None, grid=None, fig=None):
     """
     Plot partial regression for a set of regressors.
-
     Parameters
     ----------
     results : Results instance
@@ -485,47 +484,39 @@ def plot_partregress_grid(results, exog_idx=None, grid=None, fig=None):
     fig : Figure, optional
         If given, this figure is simply returned.  Otherwise a new figure is
         created.
-
     Returns
     -------
     Figure
         If `fig` is None, the created figure.  Otherwise `fig` itself.
-
     See Also
     --------
     plot_partregress : Plot partial regression for a single regressor.
     plot_ccpr : Plot CCPR against one regressor
-
     Notes
     -----
     A subplot is created for each explanatory variable given by exog_idx.
     The partial regression plot shows the relationship between the response
     and the given explanatory variable after removing the effect of all other
     explanatory variables in exog.
-
     References
     ----------
     See http://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/partregr.htm
-
     Examples
     --------
     Using the state crime dataset separately plot the effect of the each
     variable on the on the outcome, murder rate while accounting for the effect
     of all other variables in the model visualized with a grid of partial
     regression plots.
-
     >>> from statsmodels.graphics.regressionplots import plot_partregress_grid
     >>> import statsmodels.api as sm
     >>> import matplotlib.pyplot as plt
     >>> import statsmodels.formula.api as smf
-
     >>> fig = plt.figure(figsize=(8, 6))
     >>> crime_data = sm.datasets.statecrime.load_pandas()
     >>> results = smf.ols('murder ~ hs_grad + urban + poverty + single',
     ...                   data=crime_data.data).fit()
     >>> plot_partregress_grid(results, fig=fig)
     >>> plt.show()
-
     .. plot:: plots/graphics_regression_partregress_grid.py
     """
     import pandas
@@ -544,8 +535,8 @@ def plot_partregress_grid(results, exog_idx=None, grid=None, fig=None):
     ncols = 1 if nrows == len(exog_idx) else 2
     if grid is not None:
         nrows, ncols = grid
-    if ncols > 1:
-        title_kwargs = {"fontdict": {"fontsize": 'small'}}
+    # if ncols > 1:
+    #     title_kwargs = {"fontdict": {"fontsize": 'small'}}
 
     # for indexing purposes
     other_names = np.array(results.model.exog_names)
@@ -557,7 +548,8 @@ def plot_partregress_grid(results, exog_idx=None, grid=None, fig=None):
         ax = fig.add_subplot(nrows, ncols, i + 1)
         plot_partregress(y, pandas.Series(exog[:, idx],
                                           name=other_names[idx]),
-                         exog_others, ax=ax, title_kwargs=title_kwargs,
+                         exog_others, ax=ax,
+                         # title_kwargs=title_kwargs,
                          obs_labels=False)
         ax.set_title("")
 
@@ -571,9 +563,7 @@ def plot_partregress_grid(results, exog_idx=None, grid=None, fig=None):
 def plot_ccpr(results, exog_idx, ax=None):
     """
     Plot CCPR against one regressor.
-
     Generates a component and component-plus-residual (CCPR) plot.
-
     Parameters
     ----------
     results : result instance
@@ -585,17 +575,14 @@ def plot_ccpr(results, exog_idx, ax=None):
     ax : AxesSubplot, optional
         If given, it is used to plot in instead of a new figure being
         created.
-
     Returns
     -------
     Figure
         If `ax` is None, the created figure.  Otherwise the figure to which
         `ax` is connected.
-
     See Also
     --------
     plot_ccpr_grid : Creates CCPR plot for multiple regressors in a plot grid.
-
     Notes
     -----
     The CCPR plot provides a way to judge the effect of one regressor on the
@@ -606,28 +593,23 @@ def plot_ccpr(results, exog_idx, ax=None):
     is highly correlated with any of the other independent variables. If this
     is the case, the variance evident in the plot will be an underestimate of
     the true variance.
-
     References
     ----------
     http://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/ccpr.htm
-
     Examples
     --------
     Using the state crime dataset plot the effect of the rate of single
     households ('single') on the murder rate while accounting for high school
     graduation rate ('hs_grad'), percentage of people in an urban area, and rate
     of poverty ('poverty').
-
     >>> import statsmodels.api as sm
-    >>> import matplotlib.pyplot as plot
+    >>> import matplotlib.pyplot as plt
     >>> import statsmodels.formula.api as smf
-
     >>> crime_data = sm.datasets.statecrime.load_pandas()
     >>> results = smf.ols('murder ~ hs_grad + urban + poverty + single',
     ...                   data=crime_data.data).fit()
     >>> sm.graphics.plot_ccpr(results, 'single')
     >>> plt.show()
-
     .. plot:: plots/graphics_regression_ccpr.py
     """
     fig, ax = utils.create_mpl_ax(ax)
@@ -654,9 +636,7 @@ def plot_ccpr(results, exog_idx, ax=None):
 def plot_ccpr_grid(results, exog_idx=None, grid=None, fig=None):
     """
     Generate CCPR plots against a set of regressors, plot in a grid.
-
     Generates a grid of component and component-plus-residual (CCPR) plots.
-
     Parameters
     ----------
     results : result instance
@@ -670,48 +650,37 @@ def plot_ccpr_grid(results, exog_idx=None, grid=None, fig=None):
     fig : Figure, optional
         If given, this figure is simply returned.  Otherwise a new figure is
         created.
-
     Returns
     -------
     Figure
         If `ax` is None, the created figure.  Otherwise the figure to which
         `ax` is connected.
-
     See Also
     --------
     plot_ccpr : Creates CCPR plot for a single regressor.
-
     Notes
     -----
     Partial residual plots are formed as::
-
         Res + Betahat(i)*Xi versus Xi
-
     and CCPR adds::
-
         Betahat(i)*Xi versus Xi
-
     References
     ----------
     See http://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/ccpr.htm
-
     Examples
     --------
     Using the state crime dataset separately plot the effect of the each
     variable on the on the outcome, murder rate while accounting for the effect
     of all other variables in the model.
-
     >>> import statsmodels.api as sm
     >>> import matplotlib.pyplot as plt
     >>> import statsmodels.formula.api as smf
-
     >>> fig = plt.figure(figsize=(8, 8))
     >>> crime_data = sm.datasets.statecrime.load_pandas()
     >>> results = smf.ols('murder ~ hs_grad + urban + poverty + single',
     ...                   data=crime_data.data).fit()
     >>> sm.graphics.plot_ccpr_grid(results, fig=fig)
     >>> plt.show()
-
     .. plot:: plots/graphics_regression_ccpr_grid.py
     """
     fig = utils.create_mpl_fig(fig)
@@ -750,7 +719,6 @@ def abline_plot(intercept=None, slope=None, horiz=None, vert=None,
                 model_results=None, ax=None, **kwargs):
     """
     Plot a line given an intercept and slope.
-
     Parameters
     ----------
     intercept : float
@@ -768,17 +736,14 @@ def abline_plot(intercept=None, slope=None, horiz=None, vert=None,
         Matplotlib axes instance.
     **kwargs
         Options passed to matplotlib.pyplot.plt.
-
     Returns
     -------
     Figure
         The figure given by `ax.figure` or a new instance.
-
     Examples
     --------
     >>> import numpy as np
     >>> import statsmodels.api as sm
-
     >>> np.random.seed(12345)
     >>> X = sm.add_constant(np.random.normal(0, 20, size=30))
     >>> y = np.dot(X, [25, 3.5]) + np.random.normal(0, 30, size=30)
@@ -789,7 +754,6 @@ def abline_plot(intercept=None, slope=None, horiz=None, vert=None,
     >>> ax.margins(.1)
     >>> import matplotlib.pyplot as plt
     >>> plt.show()
-
     .. plot:: plots/graphics_regression_abline.py
     """
     if ax is not None:  # get axis limits first thing, do not change these
@@ -860,7 +824,9 @@ def abline_plot(intercept=None, slope=None, horiz=None, vert=None,
                         "        The instance of Influence for model."}))
 def _influence_plot(results, influence, external=True, alpha=.05,
                     criterion="cooks", size=48, plot_alpha=.75, ax=None,
+                    leverage=None, resid=None,
                     **kwargs):
+    # leverage and resid kwds are used only internally for MLEInfluence
     infl = influence
     fig, ax = utils.create_mpl_ax(ax)
 
@@ -880,34 +846,40 @@ def _influence_plot(results, influence, external=True, alpha=.05,
 
     psize = (psize - psize.min()) * new_range/old_range + 8**2
 
-    leverage = infl.hat_matrix_diag
-    if external:
-        resids = infl.resid_studentized_external
+    if leverage is None:
+        leverage = infl.hat_matrix_diag
+    if resid is None:
+        ylabel = "Studentized Residuals"
+        if external:
+            resid = infl.resid_studentized_external
+        else:
+            resid = infl.resid_studentized
     else:
-        resids = infl.resid_studentized
+        resid = np.asarray(resid)
+        ylabel = "Residuals"
 
     from scipy import stats
 
     cutoff = stats.t.ppf(1.-alpha/2, results.df_resid)
-    large_resid = np.abs(resids) > cutoff
+    large_resid = np.abs(resid) > cutoff
     large_leverage = leverage > _high_leverage(results)
     large_points = np.logical_or(large_resid, large_leverage)
 
-    ax.scatter(leverage, resids, s=psize, alpha=plot_alpha)
+    ax.scatter(leverage, resid, s=psize, alpha=plot_alpha)
 
     # add point labels
     labels = results.model.data.row_labels
     if labels is None:
-        labels = lrange(len(resids))
+        labels = lrange(len(resid))
     ax = utils.annotate_axes(np.where(large_points)[0], labels,
-                             lzip(leverage, resids),
+                             lzip(leverage, resid),
                              lzip(-(psize/2)**.5, (psize/2)**.5), "x-large",
                              ax)
 
     # TODO: make configurable or let people do it ex-post?
     font = {"fontsize": 16, "color": "black"}
-    ax.set_ylabel("Studentized Residuals", **font)
-    ax.set_xlabel("H Leverage", **font)
+    ax.set_ylabel(ylabel, **font)
+    ax.set_xlabel("Leverage", **font)
     ax.set_title("Influence Plot", **font)
     return fig
 
@@ -1058,7 +1030,6 @@ def ceres_resids(results, focus_exog, frac=0.66, cond_means=None):
     """
     Calculate the CERES residuals (Conditional Expectation Partial
     Residuals) for a fitted model.
-
     Parameters
     ----------
     results : model results instance
@@ -1075,16 +1046,13 @@ def ceres_resids(results, focus_exog, frac=0.66, cond_means=None):
         this is an empty nx0 array, the conditional means are
         treated as being zero.  If None, the conditional means are
         estimated.
-
     Returns
     -------
     An array containing the CERES residuals.
-
     Notes
     -----
     If `cond_means` is not provided, it is obtained by smoothing each
     column of exog (except the focus column) against the focus column.
-
     Currently only supports GLM, GEE, and OLS models.
     """
 
@@ -1147,7 +1115,6 @@ def partial_resids(results, focus_exog):
     """
     Returns partial residuals for a fitted model with respect to a
     'focus predictor'.
-
     Parameters
     ----------
     results : results instance
@@ -1155,11 +1122,9 @@ def partial_resids(results, focus_exog):
     focus col : int
         The column index of model.exog with respect to which the
         partial residuals are calculated.
-
     Returns
     -------
     An array of partial residuals.
-
     References
     ----------
     RD Cook and R Croos-Dabrera (1998).  Partial residual plots in
@@ -1196,7 +1161,6 @@ def added_variable_resids(results, focus_exog, resid_type=None,
     """
     Residualize the endog variable and a 'focus' exog variable in a
     regression model with respect to the other exog variables.
-
     Parameters
     ----------
     results : regression results instance
@@ -1216,19 +1180,16 @@ def added_variable_resids(results, focus_exog, resid_type=None,
     fit_kwargs : dict, optional
         Keyword arguments to be passed to fit when refitting the
         model.
-
     Returns
     -------
     endog_resid : array_like
         The residuals for the original exog
     focus_exog_resid : array_like
         The residuals for the focus predictor
-
     Notes
     -----
     The 'focus variable' residuals are always obtained using linear
     regression.
-
     Currently only GLM, GEE, and OLS models are supported.
     """
 
@@ -1285,3 +1246,20 @@ def added_variable_resids(results, focus_exog, resid_type=None,
     focus_exog_resid = lm_results.resid
 
     return endog_resid, focus_exog_resid
+Footer
+© 2022 GitHub, Inc.
+Footer navigation
+
+    Terms
+    Privacy
+    Security
+    Status
+    Docs
+    Contact GitHub
+    Pricing
+    API
+    Training
+    Blog
+    About
+
+You have no unread notifications
