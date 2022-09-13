@@ -1,42 +1,3 @@
-
-Skip to content
-Pull requests
-Issues
-Marketplace
-Explore
-@mpalinski
-mpalinski /
-statsmodels
-Public
-forked from statsmodels/statsmodels
-
-Code
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-
-    Settings
-
-statsmodels/statsmodels/graphics/regressionplots.py /
-@mpalinski
-mpalinski layout
-Latest commit 0a36ce9 15 days ago
-History
-10 contributors
-@jseabold
-@bashtage
-@josef-pkt
-@mpalinski
-@kshedden
-@jbrockmendel
-@saketkc
-@jerry-dumblauskas
-@aoot
-@AmarAdilovic
-1297 lines (1047 sloc) 43.5 KB
 '''Partial Regression plot and residual plots to find misspecification
 Author: Josef Perktold
 License: BSD-3
@@ -1246,20 +1207,3 @@ def added_variable_resids(results, focus_exog, resid_type=None,
     focus_exog_resid = lm_results.resid
 
     return endog_resid, focus_exog_resid
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-
-    Terms
-    Privacy
-    Security
-    Status
-    Docs
-    Contact GitHub
-    Pricing
-    API
-    Training
-    Blog
-    About
-
-You have no unread notifications
